@@ -85,7 +85,7 @@ class DefaultMap : Map {
         return []
     }
 
-    func move(player: Player, move: PlayerMove) {
+    func move(player: inout Player, move: PlayerMove) {
        //ТОДО: редуцирай енергията на героя на играча с 1
     }
     
@@ -126,9 +126,11 @@ class DefaultMapRenderer: MapRenderer {
             case .teleport:
                 r += "💿"
             case .empty:
-                r += "  "
+                r += "🛣"
             case .wall:
                 r += "🧱"
+            case .player:
+                r += "🧙‍♂️"
             default:
                 //empty
                 r += " "

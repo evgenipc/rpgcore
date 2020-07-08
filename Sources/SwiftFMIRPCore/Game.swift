@@ -76,7 +76,7 @@ class Game {
                             move.friendlyCommandName == command
                         }) {
                             //разпозната команда
-                            map.move(player: currentPlayer, move: move)
+                            map.move(player: &currentPlayer, move: move)
                             
                         } else {
                             //иначе, провери за

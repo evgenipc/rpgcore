@@ -4,7 +4,7 @@ protocol Map {
     var maze: [[MapTile]] {get}
 
     func availableMoves(player: Player) -> [PlayerMove]
-    func move(player: Player, move: PlayerMove)
+    func move(player: inout Player, move: PlayerMove)
 }
 
 protocol MapRenderer {
@@ -66,6 +66,7 @@ enum MapTileType {
     case wall
     case teleport
     case rock
+    case player
 }
 
 protocol MapGenerator {

@@ -1,4 +1,5 @@
-var mapGenerator = DefaultMapGenerator()
+
+var mapGenerator = AdvancedMapGenerator()
 var playerGenerator = DefaultPlayerGenerator(heroGenerator: DefaultHeroGenerator())
 var figthGenerator = DefaultFightGenerator()
 var equipmentGenerator = DefaultEquipmentGenerator()
