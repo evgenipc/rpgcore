@@ -41,23 +41,24 @@ class AdvancedMap : Map {
         if (playerEnergy[player.name] ?? 0 <= 0) {
             return []
         }
+        
         var moves = [StandartPlayerMove]()
         let pY = playerCoordinates[player.name]!.0
         let pX = playerCoordinates[player.name]!.1
         
-        if (pX + 1 < MAP_SIZE && maze[pY][pX + 1].type == MapTileType.empty) {
+        if (pX + 1 < MAP_SIZE && (maze[pY][pX + 1].type == MapTileType.empty || maze[pY][pX + 1].type == MapTileType.teleport)) {
             moves.append(StandartPlayerMove.init(direction: MapMoveDirection.right))
         }
         
-        if (pX - 1 >= 0 && maze[pY][pX - 1].type == MapTileType.empty) {
+        if (pX - 1 >= 0 && ( maze[pY][pX - 1].type == MapTileType.empty || maze[pY][pX - 1].type == MapTileType.teleport)) {
             moves.append(StandartPlayerMove.init(direction: MapMoveDirection.left))
         }
         
-        if (pY + 1 < MAP_SIZE && maze[pY + 1][pX].type == MapTileType.empty) {
+        if (pY + 1 < MAP_SIZE && (maze[pY + 1][pX].type == MapTileType.empty || maze[pY + 1][pX].type == MapTileType.teleport)) {
             moves.append(StandartPlayerMove.init(direction: MapMoveDirection.down))
         }
         
-        if (pY - 1 >= 0 && maze[pY - 1][pX].type == MapTileType.empty) {
+        if (pY - 1 >= 0 && (maze[pY - 1][pX].type == MapTileType.empty || maze[pY - 1][pX].type == MapTileType.teleport)) {
             moves.append(StandartPlayerMove.init(direction: MapMoveDirection.up))
         }
         
@@ -85,6 +86,26 @@ class AdvancedMap : Map {
                 newX -= 1
             case MapMoveDirection.right:
                 newX += 1
+            }
+            
+            if (maze[newY][newX].type == MapTileType.teleport) {
+                let otherPortal: (Int, Int)? = maze.getSomePortalCoordinates(of: MapTileType.teleport, current: (newY, newX))
+                
+                if (otherPortal!.1 + 1 < MAP_SIZE && maze[otherPortal!.0][otherPortal!.1 + 1].type == MapTileType.empty) {
+                    newX = otherPortal!.1 + 1
+                    newY = otherPortal!.0
+                } else if (otherPortal!.1 - 1 >= 0 &&  maze[otherPortal!.0][otherPortal!.1 - 1].type == MapTileType.empty) {
+                    newX = otherPortal!.1 - 1
+                    newY = otherPortal!.0
+                } else if (otherPortal!.0 + 1 < MAP_SIZE && maze[otherPortal!.0 + 1][otherPortal!.1].type == MapTileType.empty) {
+                    newX = otherPortal!.1
+                    newY = otherPortal!.0 + 1
+                } else if (otherPortal!.0 - 1 >= 0 && maze[otherPortal!.0 - 1][otherPortal!.1].type == MapTileType.empty) {
+                    newX = otherPortal!.1
+                    newY = otherPortal!.0 - 1
+                }
+                    
+                print (" New portal \(otherPortal!.0), \(otherPortal!.1)")
             }
             
             maze[playerCoordinates[currentPlayer.name]!.0][playerCoordinates[currentPlayer.name]!.1].type = MapTileType.empty
@@ -131,7 +152,7 @@ class AdvancedMap : Map {
         return [
             [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty),AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty)],
             
-            [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty),AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty)],
+            [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.teleport), AdvancedMapTile(type: MapTileType.empty),AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty)],
             
             [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty),AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty)],
             
@@ -139,10 +160,25 @@ class AdvancedMap : Map {
             
             [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty),AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty)],
             
-            [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty),AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty)],
+            [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty),AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.teleport), AdvancedMapTile(type: MapTileType.empty)],
             
             [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty),AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty)]
         ]
     }
     
+}
+
+extension Array where Element : Collection,
+Element.Iterator.Element == MapTile, Element.Index == Int {
+    
+    func getSomePortalCoordinates(of x: MapTileType, current: (Int, Int)) -> (Int, Int)? {
+        for (i, row) in self.enumerated() {
+            if let j =  row.firstIndex(where: {$0.type == x}) {
+                if (i != current.0 || j != current.1) {
+                    return (i, j)
+                }
+            }
+        }
+        return nil
+    }
 }
