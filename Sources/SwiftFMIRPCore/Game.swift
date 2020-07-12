@@ -76,7 +76,7 @@ class Game {
                             move.friendlyCommandName == command
                         }) {
                             //разпозната команда
-                            map.move(player: &currentPlayer, move: move)
+                            map.move(player: currentPlayer, move: move)
                             
                         } else {
                             //иначе, провери за
@@ -103,6 +103,7 @@ class Game {
                 } while playerMoveIsNotFinished
             }
             
+            map.endPlayerTurn(player: players[currentPlayerIndex])
             //минаваме на следващия играч
             currentPlayerIndex += 1
             currentPlayerIndex %= players.count

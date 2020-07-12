@@ -4,7 +4,8 @@ protocol Map {
     var maze: [[MapTile]] {get}
 
     func availableMoves(player: Player) -> [PlayerMove]
-    func move(player: inout Player, move: PlayerMove)
+    func move(player: Player, move: PlayerMove)
+    func endPlayerTurn(player: Player)
 }
 
 protocol MapRenderer {

@@ -9,6 +9,7 @@ struct AdvancedMapGenerator : MapGenerator {
         return AdvancedMap(players: players)
     }
 }
+
 class AdvancedMapTile: MapTile {
     var type: MapTileType
     var state: String
@@ -24,39 +25,20 @@ class AdvancedMap : Map {
         self.players = players
         
         playerCoordinates = [String : (Int, Int)]()
-        playerCoordinates[players[0].name] = (0, 0)
-        playerCoordinates[players[1].name] = (6, 0)
-        if (players.count >= 3) {
-            playerCoordinates[players[2].name] = (0, 6)
-        }
-        if (players.count >= 4) {
-            playerCoordinates[players[3].name] = (6, 6)
-        }
+        playerEnergy = [String : Int]()
+        maze = AdvancedMap.generateMaze()
         
+        setEnergyCounter(players)
+        setPlayerStartCoordinates()
     }
     
     var players: [Player]
-    var maze: [[MapTile]] = [
-        [AdvancedMapTile(type: MapTileType.player), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty),AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.player)],
-        
-        [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty),AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty)],
-        
-        [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty),AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty)],
-        
-        [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty),AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty)],
-        
-        [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty),AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty)],
-        
-        [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty),AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty)],
-        
-        [AdvancedMapTile(type: MapTileType.player), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty),AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.player)]
-        
-    ]
-    
+    var maze: [[MapTile]]
     var playerCoordinates: [String : (Int, Int)]
+    var playerEnergy: [String : Int]
     
     func availableMoves(player: Player) -> [PlayerMove] {
-        if (player.hero.energy <= 0) {
+        if (playerEnergy[player.name] ?? 0 <= 0) {
             return []
         }
         var moves = [StandartPlayerMove]()
@@ -82,35 +64,85 @@ class AdvancedMap : Map {
         return moves
     }
     
-    func move(player: inout Player, move: PlayerMove) {
-        
-        
-        if player.hero.energy > 0 {
-            player.hero.energy -= 1
+    func move(player: Player, move: PlayerMove) {
+        if let currentPlayer = (players.first {
+            (pl) -> Bool in
+            pl.name == player.name
+        }) {
+            if playerEnergy[currentPlayer.name] ?? 0 > 0 {
+                playerEnergy[currentPlayer.name]! -= 1
+            }
+            
+            var newY = playerCoordinates[player.name]!.0
+            var newX = playerCoordinates[player.name]!.1
+            
+            switch move.direction {
+            case MapMoveDirection.up:
+                newY -= 1
+            case MapMoveDirection.down:
+                newY += 1
+            case MapMoveDirection.left:
+                newX -= 1
+            case MapMoveDirection.right:
+                newX += 1
+            }
+            
+            maze[playerCoordinates[currentPlayer.name]!.0][playerCoordinates[currentPlayer.name]!.1].type = MapTileType.empty
+            maze[newY][newX].type = MapTileType.player
+            playerCoordinates[currentPlayer.name] = (newY, newX)
+            
+            print("x = \(playerCoordinates[currentPlayer.name]!.0) y = \(playerCoordinates[currentPlayer.name]!.1)")
+            print("energy left = \(playerEnergy[currentPlayer.name] ?? 0)")
+            
+        } else {
+            print("Ooops...Something went wrong.")
+            exit(0)
         }
+    }
+    
+    func endPlayerTurn(player: Player) {
+        playerEnergy[player.name] = player.hero.energy
+    }
+    
+    private func setPlayerStartCoordinates() {
+        playerCoordinates[players[0].name] = (0, 0)
+        maze[0][0] = AdvancedMapTile(type: MapTileType.player)
         
-        var newY = playerCoordinates[player.name]!.0
-        var newX = playerCoordinates[player.name]!.1
+        playerCoordinates[players[1].name] = (6, 6)
+        maze[6][6] = AdvancedMapTile(type: MapTileType.player)
         
-        switch move.direction {
-        case MapMoveDirection.up:
-            newY -= 1
-        case MapMoveDirection.down:
-            newY += 1
-        case MapMoveDirection.left:
-            newX -= 1
-        case MapMoveDirection.right:
-            newX += 1
+        if (players.count >= 3) {
+            playerCoordinates[players[2].name] = (0, 6)
+            maze[0][6] = AdvancedMapTile(type: MapTileType.player)
         }
-        
-        maze[playerCoordinates[player.name]!.0][playerCoordinates[player.name]!.1].type = MapTileType.empty
-        maze[newY][newX].type = MapTileType.player
-        playerCoordinates[player.name] = (newY, newX)
-        
-        print("x = \(playerCoordinates[player.name]!.0) y = \(playerCoordinates[player.name]!.1)")
-        print("energy left = \(player.hero.energy)")
-        
-        //ТОДО: редуцирай енергията на героя на играча с 1
+        if (players.count >= 4) {
+            playerCoordinates[players[3].name] = (6, 0)
+            maze[6][0] = AdvancedMapTile(type: MapTileType.player)
+        }
+    }
+    
+    private func setEnergyCounter(_ players: [Player]) {
+        for player in players {
+            playerEnergy[player.name] = player.hero.energy
+        }
+    }
+    
+    private static func generateMaze() -> [[MapTile]] {
+        return [
+            [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty),AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty)],
+            
+            [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty),AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty)],
+            
+            [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty),AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty)],
+            
+            [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty),AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty)],
+            
+            [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty),AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty)],
+            
+            [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty),AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty)],
+            
+            [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty),AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty)]
+        ]
     }
     
 }
