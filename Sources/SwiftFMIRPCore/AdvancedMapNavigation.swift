@@ -89,23 +89,22 @@ class AdvancedMap : Map {
             }
             
             if (maze[newY][newX].type == MapTileType.teleport) {
-                let otherPortal: (Int, Int)? = maze.getSomePortalCoordinates(of: MapTileType.teleport, current: (newY, newX))
+                let otherPortal: (Int, Int) = maze.getSomePortalCoordinates(of: MapTileType.teleport, current: (newY, newX))
                 
-                if (otherPortal!.1 + 1 < MAP_SIZE && maze[otherPortal!.0][otherPortal!.1 + 1].type == MapTileType.empty) {
-                    newX = otherPortal!.1 + 1
-                    newY = otherPortal!.0
-                } else if (otherPortal!.1 - 1 >= 0 &&  maze[otherPortal!.0][otherPortal!.1 - 1].type == MapTileType.empty) {
-                    newX = otherPortal!.1 - 1
-                    newY = otherPortal!.0
-                } else if (otherPortal!.0 + 1 < MAP_SIZE && maze[otherPortal!.0 + 1][otherPortal!.1].type == MapTileType.empty) {
-                    newX = otherPortal!.1
-                    newY = otherPortal!.0 + 1
-                } else if (otherPortal!.0 - 1 >= 0 && maze[otherPortal!.0 - 1][otherPortal!.1].type == MapTileType.empty) {
-                    newX = otherPortal!.1
-                    newY = otherPortal!.0 - 1
+                if (otherPortal.1 + 1 < MAP_SIZE && maze[otherPortal.0][otherPortal.1 + 1].type == MapTileType.empty) {
+                    newX = otherPortal.1 + 1
+                    newY = otherPortal.0
+                } else if (otherPortal.1 - 1 >= 0 &&  maze[otherPortal.0][otherPortal.1 - 1].type == MapTileType.empty) {
+                    newX = otherPortal.1 - 1
+                    newY = otherPortal.0
+                } else if (otherPortal.0 + 1 < MAP_SIZE && maze[otherPortal.0 + 1][otherPortal.1].type == MapTileType.empty) {
+                    newX = otherPortal.1
+                    newY = otherPortal.0 + 1
+                } else if (otherPortal.0 - 1 >= 0 && maze[otherPortal.0 - 1][otherPortal.1].type == MapTileType.empty) {
+                    newX = otherPortal.1
+                    newY = otherPortal.0 - 1
                 }
-                    
-                print (" New portal \(otherPortal!.0), \(otherPortal!.1)")
+                
             }
             
             maze[playerCoordinates[currentPlayer.name]!.0][playerCoordinates[currentPlayer.name]!.1].type = MapTileType.empty
@@ -152,18 +151,26 @@ class AdvancedMap : Map {
         return [
             [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty),AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty)],
             
-            [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.teleport), AdvancedMapTile(type: MapTileType.empty),AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty)],
+            [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.teleport), AdvancedMapTile(type: randomTile()),AdvancedMapTile(type: randomTile()), AdvancedMapTile(type: randomTile()), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty)],
             
-            [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty),AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty)],
+            [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: randomTile()), AdvancedMapTile(type: randomTile()),AdvancedMapTile(type: randomTile()), AdvancedMapTile(type: randomTile()), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty)],
             
-            [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty),AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty)],
+            [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: randomTile()), AdvancedMapTile(type: randomTile()),AdvancedMapTile(type: randomTile()), AdvancedMapTile(type: randomTile()), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty)],
             
-            [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty),AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty)],
+            [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: randomTile()), AdvancedMapTile(type: randomTile()),AdvancedMapTile(type: randomTile()), AdvancedMapTile(type: randomTile()), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty)],
             
-            [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.rock), AdvancedMapTile(type: MapTileType.empty),AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.teleport), AdvancedMapTile(type: MapTileType.empty)],
+            [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: randomTile()), AdvancedMapTile(type: randomTile()),AdvancedMapTile(type: randomTile()), AdvancedMapTile(type: randomTile()), AdvancedMapTile(type: MapTileType.teleport), AdvancedMapTile(type: MapTileType.empty)],
             
             [AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty),AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty), AdvancedMapTile(type: MapTileType.empty)]
         ]
+    }
+    
+    private static func randomTile() -> MapTileType {
+        var res =  MapTileType.allCases.randomElement() ?? MapTileType.empty
+        if (res == MapTileType.player) {
+            res = MapTileType.empty
+        }
+        return res
     }
     
 }
@@ -171,7 +178,7 @@ class AdvancedMap : Map {
 extension Array where Element : Collection,
 Element.Iterator.Element == MapTile, Element.Index == Int {
     
-    func getSomePortalCoordinates(of x: MapTileType, current: (Int, Int)) -> (Int, Int)? {
+    func getSomePortalCoordinates(of x: MapTileType, current: (Int, Int)) -> (Int, Int) {
         for (i, row) in self.enumerated() {
             if let j =  row.firstIndex(where: {$0.type == x}) {
                 if (i != current.0 || j != current.1) {
@@ -179,6 +186,6 @@ Element.Iterator.Element == MapTile, Element.Index == Int {
                 }
             }
         }
-        return nil
+        return (current.0, current.1)
     }
 }

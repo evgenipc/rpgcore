@@ -61,7 +61,7 @@ protocol MapTile {
     var state: String {get set}
 }
 
-enum MapTileType {
+enum MapTileType: CaseIterable {
     case empty
     case chest
     case wall
